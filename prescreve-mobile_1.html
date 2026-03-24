@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>prescreve.</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root {
+  --sage: #4a7c6f;
+  --sage-light: #6a9e8f;
+  --sage-pale: #e8f2ef;
+  --sage-dark: #2d5a50;
+  --dark: #0e1a16;
+  --cream: #faf8f4;
+  --white: #fff;
+  --charcoal: #1a1a1a;
+  --mid: #555;
+  --light: #999;
+  --border: #e8e4df;
+  --accent: #c17f3e;
+  --accent-light: #f5e8d6;
+  --green: #2d7a47;
+  --warn: #d4820a;
+}
+
+html, body {
+  font-family: 'DM Sans', sans-serif;
+  background: #f0ede8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NAVIGATION ── */
+.app-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(240,237,232,0.95);
+  backdrop-filter: blur(12px);
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--sage-dark);
+  letter-spacing: -0.5px;
+}
+.logo span { color: var(--accent); }
+
+.mode-toggle {
+  display: flex;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mode-btn {
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--mid);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.mode-btn.active { background: var(--sage); color: white; }
+
+.screen-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.screen-tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--mid);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.tab.active { background: var(--sage); border-color: var(--sage); color: white; }
+
+/* ── SCREEN AREA ── */
+.screen-area {
+  padding-top: 110px;
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── PHONE SHELL ── */
+.phone-shell {
+  background: var(--white);
+  border-radius: 28px;
+  margin: 12px 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  border: 6px solid #1a1a1a;
+}
+
+.phone-notch {
+  background: #1a1a1a;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notch-pill {
+  width: 80px; height: 8px;
+  background: #111;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.phone-body { padding: 14px 16px 20px; }
+
+/* ── DARK PHONE ── */
+.phone-shell.dark { border-color: #0a0a0a; background: #1a2920; }
+.phone-shell.dark .phone-notch { background: #0a0a0a; }
+.phone-shell.dark .phone-body { background: #1a2920; }
+
+/* ── SHARED COMPONENTS ── */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--light);
+  margin-bottom: 8px;
+}
+
+.card {
+  background: #f5f3ef;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+}
+
+.card-dark {
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+.badge-green { background: #d4edda; color: #2d7a47; }
+.badge-sage { background: var(--sage-pale); color: var(--sage); }
+.badge-orange { background: var(--accent-light); color: var(--accent); }
+.badge-warn { background: #fef3dc; color: var(--warn); }
+.badge-blue { background: #e8f0f9; color: #4a7ab5; }
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.btn-primary { background: var(--sage); color: white; }
+.btn-secondary { background: var(--sage-pale); color: var(--sage); }
+.btn-ghost { background: transparent; color: var(--light); border: 1.5px solid var(--border); }
+.btn-accent { background: var(--accent); color: white; }
+.btn-dark-primary { background: var(--sage); color: white; }
+.btn-dark-secondary { background: rgba(74,124,111,0.2); color: var(--sage-light); border: 1px solid rgba(74,124,111,0.3); }
+.btn-dark-ghost { background: transparent; color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); }
+
+.input-group { margin-bottom: 12px; }
+.input-label { font-size: 10px; font-weight: 700; color: var(--light); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+
+.input-field {
+  width: 100%;
+  background: #f5f3ef;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--charcoal);
+}
+.input-field.focused { border-color: var(--sage); background: white; }
+
+.input-dark {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 11px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: white;
+}
+.input-dark.focused { border-color: var(--sage-light); }
+
+/* AUTOCOMPLETE */
+.ac-trigger {
+  background: white;
+  border: 1.5px solid var(--sage);
+  border-radius: 11px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.ac-trigger-dark {
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid var(--sage);
+  border-radius: 11px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--sage-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ac-dropdown {
+  background: white;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+}
+.ac-dropdown-dark {
+  background: #1e2f28;
+  border-radius: 11px;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.ac-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item.sel { background: var(--sage-pale); }
+.ac-item-dark {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+}
+.ac-item-dark:last-child { border-bottom: none; }
+.ac-item-dark.sel { background: rgba(74,124,111,0.15); }
+
+.ac-name { font-size: 13px; font-weight: 600; color: var(--sage); margin-bottom: 2px; }
+.ac-detail { font-size: 11px; color: var(--light); }
+.ac-name-dark { font-size: 13px; font-weight: 600; color: var(--sage-light); margin-bottom: 2px; }
+.ac-detail-dark { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* PRODUCT SELECTED */
+.product-sel {
+  background: var(--sage-pale);
+  border: 1.5px solid var(--sage);
+  border-radius: 11px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.product-sel-name { font-size: 13px; font-weight: 700; color: var(--sage); margin-bottom: 2px; }
+.product-sel-detail { font-size: 11px; color: var(--sage-light); }
+
+/* STAT ROW */
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card { background: #f5f3ef; border-radius: 13px; padding: 14px; border: 1px solid var(--border); }
+.stat-card-dark { background: rgba(255,255,255,0.05); border-radius: 13px; padding: 14px; border: 1px solid rgba(255,255,255,0.07); }
+.stat-num { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--sage); line-height: 1; margin-bottom: 3px; }
+.stat-num-dark { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--sage-light); line-height: 1; margin-bottom: 3px; }
+.stat-label { font-size: 10px; color: var(--light); }
+.stat-label-dark { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* HISTORY ITEM */
+.hist-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.hist-item:last-child { border-bottom: none; }
+.hist-item-dark {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.hist-item-dark:last-child { border-bottom: none; }
+
+.hist-icon {
+  width: 38px; height: 38px;
+  background: var(--sage-pale);
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.hist-icon-dark {
+  width: 38px; height: 38px;
+  background: rgba(74,124,111,0.15);
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+
+.hist-name { font-size: 13px; font-weight: 600; color: var(--charcoal); margin-bottom: 2px; }
+.hist-name-dark { font-size: 13px; font-weight: 600; color: white; margin-bottom: 2px; }
+.hist-detail { font-size: 11px; color: var(--light); }
+.hist-detail-dark { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* PROGRESS BAR */
+.pb-wrap { margin-bottom: 10px; }
+.pb-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--light); margin-bottom: 4px; }
+.pb-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.pb-fill { height: 100%; background: var(--sage); border-radius: 3px; }
+.pb-track-dark { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.pb-fill-dark { height: 100%; background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%); border-radius: 3px; }
+
+/* OPTION CARD */
+.option-card {
+  display: flex; align-items: center; gap: 12px;
+  background: #f5f3ef; border-radius: 13px; padding: 12px;
+  margin-bottom: 9px; border: 1.5px solid var(--border);
+}
+.option-card.rec { border-color: var(--sage); background: var(--sage-pale); }
+.option-card-dark {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.04); border-radius: 13px; padding: 12px;
+  margin-bottom: 9px; border: 1.5px solid rgba(255,255,255,0.07);
+}
+.option-card-dark.rec { border-color: var(--sage); background: rgba(74,124,111,0.1); }
+
+.option-img {
+  width: 44px; height: 44px;
+  background: white; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0; border: 1px solid var(--border);
+}
+.option-img-dark {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.06); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+
+.option-name { font-size: 13px; font-weight: 600; color: var(--charcoal); margin-bottom: 2px; }
+.option-name-dark { font-size: 13px; font-weight: 600; color: white; margin-bottom: 2px; }
+.option-brand { font-size: 11px; color: var(--light); margin-bottom: 3px; }
+.option-brand-dark { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
+.option-price { font-size: 15px; font-weight: 700; color: var(--sage); }
+.option-price-dark { font-size: 15px; font-weight: 700; color: var(--sage-light); }
+
+/* REORDER BANNER */
+.reorder-banner {
+  background: linear-gradient(135deg, var(--sage-dark) 0%, var(--sage) 100%);
+  border-radius: 16px; padding: 16px; margin-bottom: 14px;
+}
+.reorder-title { font-size: 14px; font-weight: 700; color: white; margin-bottom: 4px; }
+.reorder-sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 12px; line-height: 1.5; }
+.reorder-btn {
+  background: white; color: var(--sage); padding: 8px 16px;
+  border-radius: 100px; font-size: 12px; font-weight: 700; display: inline-block;
+}
+
+/* TAGS */
+.tag { display: inline-block; font-size: 10px; padding: 3px 9px; border-radius: 100px; font-weight: 600; margin-right: 4px; margin-bottom: 4px; }
+.tag-sage { background: var(--sage-pale); color: var(--sage); }
+.tag-accent { background: var(--accent-light); color: var(--accent); }
+.tag-sage-dark { background: rgba(74,124,111,0.2); color: var(--sage-light); }
+.tag-accent-dark { background: rgba(193,127,62,0.15); color: var(--accent); }
+
+/* CONFIRM ROW */
+.confirm-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.confirm-row:last-child { border-bottom: none; }
+.cr-label { color: var(--light); }
+.cr-value { color: var(--charcoal); font-weight: 500; text-align: right; max-width: 55%; }
+
+/* NOTIF */
+.notif {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 13px;
+  display: flex; align-items: flex-start; gap: 11px; margin-bottom: 10px;
+}
+.notif-icon { font-size: 20px; flex-shrink: 0; }
+.notif-app { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; margin-bottom: 3px; }
+.notif-text { font-size: 12px; color: white; line-height: 1.5; }
+.notif-time { font-size: 10px; color: rgba(255,255,255,0.25); margin-left: auto; flex-shrink: 0; }
+
+/* SCAN */
+.scan-area {
+  background: #000; border-radius: 14px; height: 200px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  border: 2px solid rgba(74,124,111,0.5); margin-bottom: 12px;
+}
+.scan-frame { width: 160px; height: 120px; position: relative; }
+.sc { position: absolute; width: 22px; height: 22px; border-color: var(--sage-light); border-style: solid; }
+.sc-tl { top:0; left:0; border-width:2px 0 0 2px; }
+.sc-tr { top:0; right:0; border-width:2px 2px 0 0; }
+.sc-bl { bottom:0; left:0; border-width:0 0 2px 2px; }
+.sc-br { bottom:0; right:0; border-width:0 2px 2px 0; }
+.scan-line {
+  position: absolute; left:0; right:0; height:2px;
+  background: var(--sage-light); top:45%;
+  box-shadow: 0 0 8px var(--sage-light);
+  animation: scanMove 2s ease-in-out infinite;
+}
+@keyframes scanMove { 0%,100%{top:20%} 50%{top:75%} }
+
+/* WA */
+.wa-header {
+  background: #075e54; padding: 13px 16px;
+  display: flex; align-items: center; gap: 10px;
+  margin: -14px -16px 14px;
+}
+.wa-avatar {
+  width: 36px; height: 36px;
+  background: var(--sage-pale); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.wa-name { font-size: 14px; font-weight: 600; color: white; }
+.wa-status { font-size: 11px; color: rgba(255,255,255,0.7); }
+
+.wa-bg {
+  background: #e5ddd5; border-radius: 10px;
+  padding: 14px; margin-bottom: 14px;
+}
+.wa-bubble {
+  background: white; border-radius: 2px 13px 13px 13px;
+  padding: 13px; max-width: 92%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.wa-text { font-size: 13px; color: var(--charcoal); line-height: 1.6; margin-bottom: 10px; }
+.wa-product {
+  background: var(--sage-pale); border-radius: 9px;
+  padding: 11px; border-left: 3px solid var(--sage); margin-bottom: 10px;
+}
+.wa-product-name { font-size: 13px; font-weight: 700; color: var(--sage); margin-bottom: 4px; }
+.wa-product-detail { font-size: 11px; color: var(--mid); line-height: 1.6; }
+.wa-cta {
+  background: var(--sage); color: white; padding: 10px 13px;
+  border-radius: 9px; font-size: 13px; font-weight: 600; text-align: center;
+}
+.wa-time { font-size: 10px; color: var(--light); text-align: right; margin-top: 5px; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(240,237,232,0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 10px 20px 16px;
+  display: flex; justify-content: center; align-items: center; gap: 16px;
+}
+
+.nav-arrow {
+  width: 44px; height: 44px;
+  border-radius: 50%; border: none; cursor: pointer;
+  background: var(--sage); color: white;
+  font-size: 18px; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.2s;
+}
+.nav-arrow:disabled { background: var(--border); color: var(--light); }
+
+.nav-dots { display: flex; gap: 5px; align-items: center; }
+.ndot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: all 0.2s; cursor: pointer;
+}
+.ndot.active { background: var(--sage); width: 20px; border-radius: 3px; }
+
+.nav-label { font-size: 11px; color: var(--light); min-width: 40px; text-align: center; }
+
+/* SPLASH */
+.splash-screen {
+  min-height: calc(100vh - 190px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--dark); border-radius: 22px;
+  margin: 12px 16px; position: relative; overflow: hidden;
+}
+.splash-glow {
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,124,111,0.25) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+.splash-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 58px; font-weight: 700;
+  color: white; letter-spacing: -2px;
+  position: relative; z-index: 2;
+}
+.splash-logo span { color: var(--accent); }
+.splash-sub { font-size: 14px; color: rgba(255,255,255,0.4); position: relative; z-index: 2; margin-top: 6px; }
+
+/* DESCRIPTION CARD */
+.desc-card {
+  background: white; border-radius: 16px;
+  margin: 0 16px 12px; padding: 14px 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.desc-tag { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sage); margin-bottom: 5px; }
+.desc-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; line-height: 1.2; }
+.desc-text { font-size: 12px; color: var(--mid); line-height: 1.6; }
+
+/* WHY */
+.why-opt {
+  background: #f5f3ef; border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 13px;
+  margin-bottom: 9px; display: flex; align-items: center; gap: 11px;
+}
+.why-opt.sel { border-color: var(--sage); background: var(--sage-pale); }
+.why-opt-dark {
+  background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.07);
+  border-radius: 12px; padding: 13px;
+  margin-bottom: 9px; display: flex; align-items: center; gap: 11px;
+}
+.why-opt-dark.sel { border-color: var(--sage); background: rgba(74,124,111,0.1); }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="app-nav">
+  <div class="nav-top">
+    <div class="logo">prescreve<span>.</span></div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn_onboard" onclick="setMode('onboard')">Intro</button>
+      <button class="mode-btn" id="btn_medico" onclick="setMode('medico')">Médico</button>
+      <button class="mode-btn" id="btn_paciente" onclick="setMode('paciente')">Paciente</button>
+    </div>
+  </div>
+  <div class="screen-tabs" id="tabsEl"></div>
+</div>
+
+<!-- SCREENS -->
+<div class="screen-area" id="screensEl"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-arrow" id="btnPrev" onclick="prev()">←</button>
+  <div class="nav-dots" id="dotsEl"></div>
+  <span class="nav-label" id="navLabel">1/8</span>
+  <button class="nav-arrow" id="btnNext" onclick="next()">→</button>
+</div>
+
+<script>
+const data = {
+  onboard: [
+    {
+      tag: 'Splash',
+      desc: { tag: `ONBOARDING - TELA 1`, title: `Splash screen`, text: `Primeira tela ao abrir o app. Marca forte, carregamento rápido.` },
+      dark: true,
+      html: `
+        <div class="splash-screen">
+          <div class="splash-glow"></div>
+          <div class="splash-logo">prescreve<span>.</span></div>
+          <div class="splash-sub">do consultório ao tratamento</div>
+        </div>`
+    },
+    {
+      tag: 'Quem é você?',
+      desc: { tag: `ONBOARDING - TELA 2`, title: `Médico ou\npaciente?`, text: `O app serve os dois perfis. A escolha define o fluxo de cadastro e a experiência.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;gap:4px;margin-bottom:20px;">
+              <div style="flex:1;height:3px;background:var(--sage-light);border-radius:2px;"></div>
+              <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;"></div>
+              <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;"></div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:22px;color:white;margin-bottom:4px;">Você é médico<br>ou paciente?</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:22px;">Isso define sua experiência no app</div>
+            <div class="card-dark" style="border:1.5px solid var(--sage);background:rgba(74,124,111,0.15);margin-bottom:10px;">
+              <div style="font-size:26px;margin-bottom:8px;">👩‍⚕️</div>
+              <div style="font-size:14px;font-weight:600;color:white;margin-bottom:3px;">Sou médico</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.35);">Quero enviar recomendações e acompanhar meus pacientes</div>
+            </div>
+            <div class="card-dark" style="margin-bottom:20px;">
+              <div style="font-size:26px;margin-bottom:8px;">🙋</div>
+              <div style="font-size:14px;font-weight:600;color:white;margin-bottom:3px;">Sou paciente</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.35);">Quero ver minhas recomendações e acompanhar meu tratamento</div>
+            </div>
+            <button class="btn btn-dark-primary">Continuar como Médico →</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Cadastro',
+      desc: { tag: `ONBOARDING - TELA 3`, title: `Cadastro\nsimples`, text: `Nome, CRM e especialidade. Sem certificado digital. Em 2 minutos o médico está pronto.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;gap:4px;margin-bottom:20px;">
+              <div style="flex:1;height:3px;background:var(--sage-light);border-radius:2px;"></div>
+              <div style="flex:1;height:3px;background:var(--sage-light);border-radius:2px;"></div>
+              <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;"></div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:22px;color:white;margin-bottom:4px;">Criar conta</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:18px;">Leva menos de 2 minutos</div>
+            <div class="input-group"><div class="input-label" style="color:rgba(255,255,255,0.3);">Nome completo</div><div class="input-dark focused">Dra. Camila Souza</div></div>
+            <div class="input-group"><div class="input-label" style="color:rgba(255,255,255,0.3);">CRM</div><div class="input-dark">SP-123456</div></div>
+            <div class="input-group">
+              <div class="input-label" style="color:rgba(255,255,255,0.3);">Especialidade</div>
+              <div class="ac-dropdown-dark">
+                <div class="ac-item-dark sel"><div class="ac-name-dark">Dermatologia</div></div>
+                <div class="ac-item-dark"><div class="ac-name-dark">Nutrologia</div></div>
+                <div class="ac-item-dark"><div class="ac-name-dark">Endocrinologia</div></div>
+              </div>
+            </div>
+            <div class="input-group"><div class="input-label" style="color:rgba(255,255,255,0.3);">WhatsApp</div><div class="input-dark">(11) 99999-0000</div></div>
+            <button class="btn btn-dark-primary">Criar conta →</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Tour',
+      desc: { tag: `ONBOARDING - TELA 4`, title: `Tour rápido\ndo app`, text: `3 funcionalidades principais em 30 segundos. O médico entende o valor antes de começar.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;gap:4px;margin-bottom:24px;">
+              <div style="flex:1;height:3px;background:var(--sage-light);border-radius:2px;"></div>
+              <div style="flex:1;height:3px;background:var(--sage-light);border-radius:2px;"></div>
+              <div style="flex:1;height:3px;background:var(--sage-light);border-radius:2px;"></div>
+            </div>
+            <div style="background:rgba(74,124,111,0.1);border-radius:16px;padding:22px;text-align:center;margin-bottom:18px;border:1px solid rgba(74,124,111,0.2);">
+              <div style="font-size:40px;margin-bottom:10px;">⚡</div>
+              <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;margin-bottom:6px;">30 segundos por recomendação</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">Digite 3 letras, o app completa. Paciente recebe na hora no WhatsApp.</div>
+            </div>
+            <div class="card-dark" style="display:flex;align-items:center;gap:11px;margin-bottom:8px;">
+              <span style="font-size:22px;">📱</span>
+              <div><div style="font-size:13px;font-weight:600;color:white;">Paciente recebe no WhatsApp</div><div style="font-size:11px;color:rgba(255,255,255,0.35);">Sem precisar baixar nenhum app</div></div>
+            </div>
+            <div class="card-dark" style="display:flex;align-items:center;gap:11px;margin-bottom:20px;">
+              <span style="font-size:22px;">🔄</span>
+              <div><div style="font-size:13px;font-weight:600;color:white;">Recompra automática</div><div style="font-size:11px;color:rgba(255,255,255,0.35);">Sistema lembra o paciente na hora certa</div></div>
+            </div>
+            <button class="btn btn-dark-primary">Começar agora →</button>
+            <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;">Pular tour</div>
+          </div>
+        </div>`
+    }
+  ],
+  medico: [
+    {
+      tag: 'Login',
+      desc: { tag: `MÉDICO - TELA 1`, title: `Login simples,\nsem burocracia`, text: `Sem certificado digital, sem processo complexo. CRM ou e-mail e senha. Em 10 segundos está dentro.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="text-align:center;padding:20px 0 28px;">
+              <div class="logo" style="font-size:30px;">prescreve<span>.</span></div>
+              <div style="font-size:11px;color:var(--light);margin-top:4px;">para médicos</div>
+            </div>
+            <div class="input-group"><div class="input-label">CRM ou E-mail</div><div class="input-field focused">dra.camila@gmail.com</div></div>
+            <div class="input-group"><div class="input-label">Senha</div><div class="input-field" style="letter-spacing:5px;color:var(--mid);">••••••••</div></div>
+            <button class="btn btn-primary" style="margin-top:8px;">Entrar na plataforma</button>
+            <div style="text-align:center;font-size:12px;color:var(--light);margin-top:12px;">Primeiro acesso? <span style="color:var(--sage);font-weight:600;">Criar conta</span></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Dashboard',
+      desc: { tag: `MÉDICO - TELA 2`, title: `Dashboard e\nvisão geral`, text: `Resumo do mês: recomendações, conversão e pacientes em recompra. Ação rápida de nova recomendação.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <div class="logo" style="font-size:16px;">prescreve<span>.</span></div>
+              <div style="width:32px;height:32px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">👩‍⚕️</div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--charcoal);margin-bottom:2px;">Boa tarde, Dra. Camila 👋</div>
+            <div style="font-size:11px;color:var(--light);margin-bottom:14px;">Janeiro 2025</div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">47</div><div class="stat-label">Recomendações</div></div>
+              <div class="stat-card"><div class="stat-num">68%</div><div class="stat-label">Conversão</div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Em recompra</div></div>
+              <div class="stat-card"><div class="stat-num" style="color:var(--warn);">8</div><div class="stat-label">Não iniciaram ⚠️</div></div>
+            </div>
+            <button class="btn btn-primary">+ Nova Recomendação</button>
+            <div class="section-label">Recentes</div>
+            <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Maria Oliveira</div><div class="hist-detail">Minoxidil 5%  -  hoje</div></div><span class="badge badge-warn">Não iniciou</span></div>
+            <div class="hist-item"><div class="hist-icon">🧴</div><div style="flex:1;"><div class="hist-name">Ana Paula Lima</div><div class="hist-detail">Vitamina C  -  Dia 18/60</div></div><span class="badge badge-green">Ativo ✓</span></div>
+            <div class="hist-item" style="border-bottom:none;"><div class="hist-icon">☀️</div><div style="flex:1;"><div class="hist-name">Fernanda Reis</div><div class="hist-detail">FPS 70  -  Recompra →</div></div><span class="badge badge-blue">Recompra</span></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Nova rec.',
+      desc: { tag: `MÉDICO - TELA 3`, title: `Nova recomendação\nem 30 segundos`, text: `Autofill de paciente salvo + autofill de produto. Digita 3 letras, o sistema completa tudo. Envio em 1 clique.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+              <span style="font-size:18px;color:var(--mid);">←</span>
+              <div style="font-size:15px;font-weight:600;color:var(--charcoal);">Nova Recomendação</div>
+            </div>
+            <div class="input-group">
+              <div class="input-label">Paciente</div>
+              <div class="ac-trigger">👤 <span style="color:var(--sage-light);">Mari...</span></div>
+              <div class="ac-dropdown">
+                <div class="ac-item sel"><div class="ac-name">Maria Oliveira</div><div class="ac-detail">(11) 99999-1234  -  10 jan</div></div>
+                <div class="ac-item"><div class="ac-name">Marina Costa</div><div class="ac-detail">(11) 98888-5678  -  5 jan</div></div>
+                <div class="ac-item" style="font-size:11px;color:var(--light);font-style:italic;">+ Novo paciente</div>
+              </div>
+            </div>
+            <div class="input-group">
+              <div class="input-label">Produto</div>
+              <div class="ac-trigger">🔍 <span style="color:var(--sage-light);">mino...</span></div>
+              <div class="ac-dropdown">
+                <div class="ac-item sel"><div class="ac-name">Minoxidil 5% — Kirkland 60ml</div><div class="ac-detail">Uso tópico  -  ★ Favorito</div></div>
+                <div class="ac-item"><div class="ac-name">Minoxidil 5% — Regaine 60ml</div><div class="ac-detail">Uso tópico</div></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <div class="input-group" style="margin:0;"><div class="input-label">Frequência</div><div class="input-field focused">2x ao dia</div></div>
+              <div class="input-group" style="margin:0;"><div class="input-label">Duração</div><div class="input-field focused">3 meses</div></div>
+            </div>
+            <button class="btn btn-primary">Revisar e Enviar →</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Confirmar',
+      desc: { tag: `MÉDICO - TELA 4`, title: `Confirmar e\nenviar`, text: `Resumo visual antes do envio. Médico vê tudo e confirma. WhatsApp disparado instantaneamente.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+              <span style="font-size:18px;color:var(--mid);">←</span>
+              <div style="font-size:15px;font-weight:600;color:var(--charcoal);">Confirmar Envio</div>
+            </div>
+            <div class="card" style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                <div><div style="font-size:10px;color:var(--light);margin-bottom:2px;">PACIENTE</div><div style="font-size:15px;font-weight:600;color:var(--charcoal);">Maria Oliveira</div><div style="font-size:11px;color:var(--mid);">(11) 99999-1234</div></div>
+                <div style="background:var(--sage-pale);border-radius:9px;padding:7px 11px;text-align:center;"><div style="font-size:9px;color:var(--sage);font-weight:700;">ENVIANDO POR</div><div style="font-size:12px;color:var(--sage);font-weight:700;">WhatsApp</div></div>
+              </div>
+              <div style="background:white;border-radius:11px;padding:13px;border:1.5px solid var(--sage);">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:20px;">💊</span><div><div style="font-size:13px;font-weight:700;color:var(--sage);">Minoxidil 5% — Kirkland</div><div style="font-size:11px;color:var(--mid);">Uso tópico  -  60ml</div></div></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;">
+                  <div style="background:var(--sage-pale);border-radius:8px;padding:8px;"><div style="font-size:9px;color:var(--sage-light);">FREQUÊNCIA</div><div style="font-size:12px;font-weight:700;color:var(--sage);">2x ao dia</div></div>
+                  <div style="background:var(--sage-pale);border-radius:8px;padding:8px;"><div style="font-size:9px;color:var(--sage-light);">DURAÇÃO</div><div style="font-size:12px;font-weight:700;color:var(--sage);">3 meses</div></div>
+                </div>
+                <div style="background:var(--accent-light);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--mid);">📝 Evitar molhar por 4h após aplicação</div>
+              </div>
+            </div>
+            <button class="btn btn-primary">📤 Enviar para Maria agora</button>
+            <div style="text-align:center;font-size:12px;color:var(--sage);">+ Adicionar outro produto</div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Histórico',
+      desc: { tag: `MÉDICO - TELA 5`, title: `Histórico e\nstatus dos pacientes`, text: `Visão completa de todos os pacientes com status em tempo real: não iniciou, em tratamento ou recompra.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="font-family:'Fraunces',serif;font-size:19px;color:var(--charcoal);margin-bottom:12px;">Meus Pacientes</div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">32</div><div class="stat-label">Em tratamento</div></div>
+              <div class="stat-card"><div class="stat-num" style="color:var(--warn);">8</div><div class="stat-label">Não iniciaram ⚠️</div></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+              <span class="badge badge-sage" style="padding:5px 11px;">Todos</span>
+              <span class="badge badge-warn" style="padding:5px 11px;">Não iniciou</span>
+              <span class="badge badge-green" style="padding:5px 11px;">Ativo</span>
+              <span class="badge badge-blue" style="padding:5px 11px;">Recompra</span>
+            </div>
+            <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Maria Oliveira</div><div class="hist-detail">Minoxidil 5%  -  hoje  -  Dia 0/90</div></div><span class="badge badge-warn">Não iniciou</span></div>
+            <div class="hist-item"><div class="hist-icon">🧴</div><div style="flex:1;"><div class="hist-name">Ana Paula Lima</div><div class="hist-detail">Vitamina C  -  Dia 18/60</div></div><span class="badge badge-green">Ativo ✓</span></div>
+            <div class="hist-item"><div class="hist-icon">☀️</div><div style="flex:1;"><div class="hist-name">Fernanda Reis</div><div class="hist-detail">FPS 70  -  Dia 28/30</div></div><span class="badge badge-blue">Recompra →</span></div>
+            <div class="hist-item" style="border-bottom:none;"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Carlos Mendes</div><div class="hist-detail">Ômega 3  -  Dia 45/90</div></div><span class="badge badge-green">Ativo ✓</span></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Analytics',
+      desc: { tag: `MÉDICO - TELA 6`, title: `Analytics —\ntaxa de conversão`, text: `Quais produtos têm maior aderência, onde estão os gargalos e qual o principal motivo de não compra.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="font-size:18px;color:var(--mid);">←</span>
+              <div style="font-size:15px;font-weight:600;color:var(--charcoal);">Analytics</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">68%</div><div class="stat-label">Conversão geral</div></div>
+              <div class="stat-card"><div class="stat-num">R$8.2k</div><div class="stat-label">GMV gerado</div></div>
+            </div>
+            <div class="section-label">Maior aderência</div>
+            <div class="card" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Minoxidil 5% Kirkland</div><span class="badge badge-green">82%</span></div>
+              <div class="pb-track"><div class="pb-fill" style="width:82%;"></div></div>
+              <div style="font-size:10px;color:var(--light);margin-top:3px;">18 rec.  -  15 compraram</div>
+            </div>
+            <div class="card" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Vitamina C 1000mg</div><span class="badge badge-blue">71%</span></div>
+              <div class="pb-track"><div class="pb-fill" style="width:71%;"></div></div>
+              <div style="font-size:10px;color:var(--light);margin-top:3px;">14 rec.  -  10 compraram</div>
+            </div>
+            <div class="card" style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Protetor Solar FPS 70</div><span class="badge badge-orange">50%</span></div>
+              <div class="pb-track"><div class="pb-fill" style="width:50%;background:var(--accent);"></div></div>
+              <div style="font-size:10px;color:var(--light);margin-top:3px;">10 rec.  -  5 compraram</div>
+            </div>
+            <div class="section-label">Principal motivo de não compra</div>
+            <div class="card" style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:20px;">💰</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Preço alto — 60% dos casos</div><div style="font-size:11px;color:var(--mid);">Considere sugerir alternativas mais baratas</div></div>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Perfil pac.',
+      desc: { tag: `MÉDICO - TELA 7`, title: `Perfil do\npaciente individual`, text: `Histórico completo de um paciente. O médico vê todos os tratamentos, aderência e pode enviar nova recomendação.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="font-size:18px;color:var(--mid);">←</span>
+              <div style="font-size:15px;font-weight:600;color:var(--charcoal);">Perfil do Paciente</div>
+            </div>
+            <div style="text-align:center;padding:8px 0 14px;">
+              <div style="width:52px;height:52px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px;">👤</div>
+              <div style="font-size:16px;font-weight:600;color:var(--charcoal);">Maria Oliveira</div>
+              <div style="font-size:11px;color:var(--light);">(11) 99999-1234</div>
+              <div style="display:flex;gap:6px;justify-content:center;margin-top:8px;">
+                <span class="badge badge-sage">3 tratamentos</span>
+                <span class="badge badge-green">68% aderência</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-bottom:12px;">+ Nova Recomendação para Maria</button>
+            <div class="section-label">Tratamentos</div>
+            <div class="card" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Minoxidil 5% Kirkland</div><span class="badge badge-warn">Não iniciou</span></div>
+              <div style="font-size:11px;color:var(--light);">Enviado hoje  -  3 meses  -  2x ao dia</div>
+            </div>
+            <div class="card" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Vitamina C 1000mg</div><span class="badge badge-green">Concluído ✓</span></div>
+              <div class="pb-track" style="margin-bottom:3px;"><div class="pb-fill" style="width:100%;"></div></div>
+              <div style="font-size:11px;color:var(--light);">nov 2024  -  60 dias completos</div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:13px;font-weight:600;color:var(--charcoal);">Protetor Solar FPS 70</div><span class="badge badge-green">Concluído ✓</span></div>
+              <div style="font-size:11px;color:var(--light);">out 2024  -  30 dias completos</div>
+            </div>
+          </div>
+        </div>`
+    }
+  ],
+  paciente: [
+    {
+      tag: 'Home',
+      desc: { tag: `PACIENTE - TELA 1`, title: `Home —\ntratamentos ativos`, text: `Visão geral dos tratamentos em andamento. Barra de progresso, recompra pendente e histórico.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <div class="logo" style="font-size:16px;color:white;">prescreve<span style="color:var(--accent);">.</span></div>
+              <div style="width:30px;height:30px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;">🙋</div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:20px;color:white;margin-bottom:2px;">Olá, Maria 👋</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:14px;">1 tratamento ativo</div>
+            <div class="reorder-banner">
+              <div class="reorder-title">⏰ Hora de renovar!</div>
+              <div class="reorder-sub">Seu Minoxidil está acabando.<br>Faltam 5 dias para terminar o frasco.</div>
+              <div class="reorder-btn">Comprar agora →</div>
+            </div>
+            <div class="section-label">Tratamento ativo</div>
+            <div class="card-dark" style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                <div style="font-size:13px;font-weight:600;color:white;">💊 Minoxidil 5% — Kirkland</div>
+                <span class="badge" style="background:rgba(74,124,111,0.2);color:var(--sage-light);">Ativo</span>
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;">Dra. Camila Souza  -  2x ao dia</div>
+              <div class="pb-wrap">
+                <div class="pb-labels" style="color:rgba(255,255,255,0.3);"><span>Dia 25</span><span>de 90</span></div>
+                <div class="pb-track-dark"><div class="pb-fill-dark" style="width:28%;"></div></div>
+              </div>
+              <div><span class="tag tag-sage-dark">2x ao dia</span><span class="tag tag-accent-dark">3 meses</span></div>
+            </div>
+            <div class="section-label">Histórico</div>
+            <div class="hist-item-dark"><div class="hist-icon-dark">☀️</div><div style="flex:1;"><div class="hist-name-dark">Protetor Solar FPS 70</div><div class="hist-detail-dark">Dra. Camila  -  nov 2024</div></div><span class="badge badge-green">✓</span></div>
+            <div class="hist-item-dark" style="border-bottom:none;"><div class="hist-icon-dark">💊</div><div style="flex:1;"><div class="hist-name-dark">Vitamina D 2000UI</div><div class="hist-detail-dark">Dr. Paulo  -  out 2024</div></div><span class="badge badge-green">✓</span></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'WhatsApp',
+      desc: { tag: `PACIENTE - TELA 2`, title: `Recebe no\nWhatsApp`, text: `Quando o médico usa o app, o paciente recebe o link no WhatsApp. Sem baixar nada — abre no navegador.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body" style="padding:0;">
+            <div class="wa-header">
+              <span style="color:white;font-size:16px;margin-right:4px;">←</span>
+              <div class="wa-avatar">💊</div>
+              <div><div class="wa-name">prescreve.</div><div class="wa-status">online agora</div></div>
+            </div>
+            <div style="padding:14px 16px;">
+              <div style="text-align:center;font-size:10px;color:#888;margin-bottom:12px;">Hoje  -  14h32</div>
+              <div class="wa-bubble">
+                <div class="wa-text">Olá, Maria! 👋<br><br>A <strong>Dra. Camila Souza</strong> acabou de enviar uma recomendação para você.</div>
+                <div class="wa-product">
+                  <div class="wa-product-name">💊 Minoxidil 5% — Kirkland</div>
+                  <div class="wa-product-detail"><strong>Frequência:</strong> 2x ao dia<br><strong>Duração:</strong> 3 meses<br><strong>Obs:</strong> Evitar molhar por 4h</div>
+                </div>
+                <div class="wa-cta">🛒 Ver opções e comprar →</div>
+                <div class="wa-time">14:32 ✓✓</div>
+              </div>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Escanear',
+      desc: { tag: `PACIENTE - TELA 3`, title: `Escanear receita\nem papel`, text: `Médico usou papel? O paciente escaneia. A IA lê e oferece comprar agora ou salvar com lembrete.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Escanear Receita</div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px;line-height:1.6;">Aponte a câmera para o papel do médico. A IA lê e organiza automaticamente.</div>
+            <div class="scan-area">
+              <div class="scan-frame">
+                <div class="sc sc-tl"></div><div class="sc sc-tr"></div>
+                <div class="sc sc-bl"></div><div class="sc sc-br"></div>
+                <div class="scan-line"></div>
+              </div>
+            </div>
+            <div style="background:rgba(74,124,111,0.12);border-radius:12px;padding:13px;border:1.5px solid var(--sage);margin-bottom:12px;">
+              <div style="font-size:9px;color:var(--sage-light);font-weight:700;letter-spacing:1px;margin-bottom:6px;">✓ LIDO PELA IA — CONFIRME</div>
+              <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">💊 Minoxidil 5% — uso tópico</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;">Frequência: 2x ao dia  -  Duração: 3 meses<br>Obs: Evitar molhar por 4h após aplicação</div>
+            </div>
+            <button class="btn btn-accent" style="margin-bottom:8px;">🛒 Comprar agora</button>
+            <button class="btn btn-dark-secondary">🔔 Salvar e me lembrar depois</button>
+            <button class="btn btn-dark-ghost" style="font-size:12px;">Escanear novamente</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Comprar',
+      desc: { tag: `PACIENTE - TELA 4`, title: `Produto recomendado\n+ alternativas`, text: `Marca exata do médico em destaque. Alternativas com mesmo efeito em preços diferentes.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Recomendação</div>
+            </div>
+            <div style="margin-bottom:14px;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">Dra. Camila Souza  -  hoje</div>
+              <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;">Minoxidil 5%</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);">2x ao dia  -  3 meses  -  Evitar molhar 4h</div>
+            </div>
+            <div class="section-label">Recomendado pelo médico</div>
+            <div class="option-card-dark rec">
+              <div class="option-img-dark">🧴</div>
+              <div style="flex:1;">
+                <span class="badge" style="background:rgba(74,124,111,0.2);color:var(--sage-light);margin-bottom:4px;display:inline-block;">✓ Recomendado</span>
+                <div class="option-name-dark">Kirkland Minoxidil 5%</div>
+                <div class="option-brand-dark">60ml  -  Uso tópico</div>
+                <div class="option-price-dark">R$ 74,90</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin:8px 0;"><div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div><span style="font-size:9px;color:rgba(255,255,255,0.2);">OUTRAS OPÇÕES</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div></div>
+            <div class="option-card-dark"><div class="option-img-dark">🧴</div><div style="flex:1;"><div class="option-name-dark">Regaine Minoxidil 5%</div><div class="option-brand-dark">60ml</div><div class="option-price-dark">R$ 89,90</div></div></div>
+            <div class="option-card-dark"><div class="option-img-dark">🧴</div><div style="flex:1;"><div class="option-name-dark">Minoxidil 5% Genérico</div><div class="option-brand-dark">60ml</div><div class="option-price-dark">R$ 52,00</div></div></div>
+            <button class="btn btn-dark-primary" style="margin-top:8px;">Comprar Kirkland  -  R$74,90</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button class="btn btn-dark-secondary" style="margin:0;font-size:12px;padding:11px;">🏪 Já comprei</button>
+              <button class="btn btn-dark-ghost" style="margin:0;font-size:12px;padding:11px;">🔔 Lembrar depois</button>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Lembrete',
+      desc: { tag: `PACIENTE - TELA 5`, title: `Salvar com\nlembrete`, text: `Recomendação salva com instruções de uso. Paciente escolhe quando quer ser lembrado.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="text-align:center;padding:8px 0 14px;">
+              <div style="width:54px;height:54px;background:rgba(74,124,111,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px;">✅</div>
+              <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;margin-bottom:3px;">Recomendação salva!</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">Minoxidil 5%  -  Dra. Camila Souza</div>
+            </div>
+            <div class="card-dark" style="margin-bottom:12px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;letter-spacing:0.5px;">📋 INSTRUÇÕES DE USO</div>
+              <div style="font-size:13px;color:white;line-height:1.8;">Aplicar <strong>1ml</strong> no couro cabeludo<br><strong>2x ao dia</strong> — manhã e noite<br>Evitar molhar por <strong>4 horas</strong> após</div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Quando posso te lembrar de comprar?</div>
+            <div class="why-opt-dark sel"><span style="font-size:18px;">🌅</span><div><div style="font-size:13px;font-weight:600;color:var(--sage-light);">Amanhã de manhã</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">às 9h00</div></div></div>
+            <div class="why-opt-dark"><span style="font-size:18px;">📅</span><div><div style="font-size:13px;color:white;">Em 3 dias</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Sex, 09h00</div></div></div>
+            <div class="why-opt-dark"><span style="font-size:18px;">⚙️</span><div><div style="font-size:13px;color:white;">Escolher data e hora</div></div></div>
+            <button class="btn btn-dark-primary" style="margin-top:8px;">Definir lembrete</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Notificações',
+      desc: { tag: `PACIENTE - TELA 6`, title: `Notificações\npush`, text: `O app avisa na hora certa — para tomar, para recomprar. Nunca envia em fins de semana.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-bottom:12px;">Hoje, 09:00</div>
+            <div class="notif"><div class="notif-icon">💊</div><div style="flex:1;"><div class="notif-app">PRESCREVE.</div><div class="notif-text"><strong>Hora do Minoxidil!</strong><br>Aplique 1ml no couro cabeludo agora</div></div><div class="notif-time">agora</div></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin:12px 0;">Ontem, 08:30</div>
+            <div class="notif"><div class="notif-icon">🛒</div><div style="flex:1;"><div class="notif-app">PRESCREVE.</div><div class="notif-text"><strong>Seu Minoxidil está acabando!</strong><br>Compre agora para não interromper</div></div><div class="notif-time">ontem</div></div>
+            <div class="notif" style="opacity:0.5;"><div class="notif-icon">⭐</div><div style="flex:1;"><div class="notif-app">PRESCREVE.</div><div class="notif-text">Parabéns! 30 dias de tratamento com Minoxidil 🎉</div></div><div class="notif-time">15 jan</div></div>
+            <div class="card-dark" style="text-align:center;margin-top:4px;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px;">Notificações enviadas terça a quinta,<br>nunca em fins de semana</div>
+              <button class="btn btn-dark-secondary" style="margin:0;">Configurar lembretes</button>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Por quê não?',
+      desc: { tag: `PACIENTE - TELA 7`, title: `Por quê não\nvai comprar?`, text: `Antes de parar os lembretes, coleta o motivo. Dado valioso para o médico entender barreiras.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="font-family:'Fraunces',serif;font-size:21px;color:white;margin-bottom:4px;margin-top:8px;">Pode nos contar<br>o motivo?</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:18px;">Leva 5 segundos e ajuda a Dra. Camila</div>
+            <div class="why-opt-dark sel"><span style="font-size:20px;">💰</span><div><div style="font-size:13px;font-weight:600;color:var(--sage-light);">Preço muito alto</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Ver alternativas mais baratas</div></div></div>
+            <div class="why-opt-dark"><span style="font-size:20px;">📦</span><div><div style="font-size:13px;color:white;">Já tenho em casa</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Vou usar o que tenho</div></div></div>
+            <div class="why-opt-dark"><span style="font-size:20px;">💊</span><div><div style="font-size:13px;color:white;">Não preciso mais</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Tratamento cancelado</div></div></div>
+            <div class="why-opt-dark"><span style="font-size:20px;">🤐</span><div><div style="font-size:13px;color:white;">Prefiro não dizer</div></div></div>
+            <button class="btn btn-dark-primary" style="margin-top:14px;">Enviar e parar lembretes</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Config.',
+      desc: { tag: `PACIENTE - TELA 8`, title: `Configurações\nde notificação`, text: `O paciente controla quando e como quer ser lembrado. Nunca envia em fins de semana.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Notificações</div>
+            </div>
+            <div class="section-label">Lembretes de recompra</div>
+            <div class="card-dark" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-size:13px;font-weight:600;color:white;">Lembrete de recompra</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Quando o estoque está acabando</div></div>
+                <div style="width:42px;height:24px;background:var(--sage);border-radius:12px;position:relative;"><div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;"></div></div>
+              </div>
+            </div>
+            <div class="card-dark" style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-size:13px;font-weight:600;color:white;">Horário preferido</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Terça a quinta, às 9h00</div></div>
+                <div style="font-size:12px;color:var(--sage-light);">Editar</div>
+              </div>
+            </div>
+            <div class="section-label">Lembretes de dose</div>
+            <div class="card-dark" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-size:13px;font-weight:600;color:white;">Lembrete de aplicação</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">2x ao dia — 8h e 20h</div></div>
+                <div style="width:42px;height:24px;background:rgba(255,255,255,0.1);border-radius:12px;position:relative;"><div style="width:20px;height:20px;background:rgba(255,255,255,0.3);border-radius:50%;position:absolute;top:2px;left:2px;"></div></div>
+              </div>
+            </div>
+            <div style="background:rgba(74,124,111,0.08);border-radius:11px;padding:11px 13px;font-size:11px;color:rgba(255,255,255,0.3);line-height:1.6;margin-top:8px;">
+              📅 Nunca enviamos notificações em sextas, sábados ou domingos. Estudos mostram menor aderência nesses dias.
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Histórico',
+      desc: { tag: `PACIENTE - TELA 9`, title: `Histórico completo\nde tratamentos`, text: `Todos os tratamentos organizados: ativos, concluídos e abandonados. Instruções sempre acessíveis.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Histórico</div>
+            </div>
+            <div class="section-label">Ativo</div>
+            <div class="card-dark" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div style="font-size:13px;font-weight:600;color:white;">💊 Minoxidil 5%</div><span class="badge" style="background:rgba(74,124,111,0.2);color:var(--sage-light);">Dia 25/90</span></div>
+              <div class="pb-track-dark" style="margin-bottom:4px;"><div class="pb-fill-dark" style="width:28%;"></div></div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">Dra. Camila  -  jan 2025  -  3 meses</div>
+            </div>
+            <div class="section-label" style="margin-top:8px;">Concluídos</div>
+            <div class="card-dark" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:13px;font-weight:600;color:white;">☀️ Protetor FPS 70</div><span class="badge badge-green">✓</span></div>
+              <div class="pb-track-dark" style="margin-bottom:4px;"><div class="pb-fill-dark" style="width:100%;"></div></div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">Dra. Camila  -  nov 2024  -  30 dias</div>
+            </div>
+            <div class="card-dark" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:13px;font-weight:600;color:white;">💊 Vitamina D 2000UI</div><span class="badge badge-green">✓</span></div>
+              <div class="pb-track-dark" style="margin-bottom:4px;"><div class="pb-fill-dark" style="width:100%;"></div></div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">Dr. Paulo Lima  -  out 2024  -  60 dias</div>
+            </div>
+            <div class="card-dark">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:13px;font-weight:600;color:white;">🌿 Colágeno Verisol</div><span class="badge badge-orange">Abandonado</span></div>
+              <div class="pb-track-dark" style="margin-bottom:4px;"><div style="height:100%;width:40%;background:rgba(193,127,62,0.4);border-radius:3px;"></div></div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">Dra. Camila  -  set 2024  -  parou no dia 36</div>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Perfil',
+      desc: { tag: `PACIENTE - TELA 10`, title: `Perfil e\npreferências`, text: `Dados pessoais, médicos vinculados, notificações e histórico exportável.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Meu Perfil</div>
+            </div>
+            <div style="text-align:center;padding:8px 0 18px;">
+              <div style="width:58px;height:58px;background:rgba(74,124,111,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 8px;">🙋</div>
+              <div style="font-size:16px;font-weight:600;color:white;">Maria Oliveira</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.3);">(11) 99999-1234</div>
+            </div>
+            <div class="section-label">Minha saúde</div>
+            <div class="hist-item-dark"><div class="hist-icon-dark">💊</div><div style="flex:1;"><div class="hist-name-dark">Tratamentos</div><div class="hist-detail-dark">3 tratamentos  -  1 ativo</div></div><span style="color:rgba(255,255,255,0.3);">&rsaquo;</span></div>
+            <div class="hist-item-dark"><div class="hist-icon-dark">👩‍⚕️</div><div style="flex:1;"><div class="hist-name-dark">Meus médicos</div><div class="hist-detail-dark">Dra. Camila  -  Dr. Paulo</div></div><span style="color:rgba(255,255,255,0.3);">&rsaquo;</span></div>
+            <div class="hist-item-dark"><div class="hist-icon-dark">📊</div><div style="flex:1;"><div class="hist-name-dark">Exportar histórico</div><div class="hist-detail-dark">PDF com todos os tratamentos</div></div><span style="color:rgba(255,255,255,0.3);">&rsaquo;</span></div>
+            <div class="section-label" style="margin-top:8px;">Preferências</div>
+            <div class="hist-item-dark"><div class="hist-icon-dark">🔔</div><div style="flex:1;"><div class="hist-name-dark">Notificações</div><div class="hist-detail-dark">Seg a qui, 9h00</div></div><span style="color:rgba(255,255,255,0.3);">&rsaquo;</span></div>
+            <div class="hist-item-dark" style="border-bottom:none;"><div class="hist-icon-dark">🔒</div><div style="flex:1;"><div class="hist-name-dark">Privacidade</div><div class="hist-detail-dark">Seus dados são protegidos</div></div><span style="color:rgba(255,255,255,0.3);">&rsaquo;</span></div>
+          </div>
+        </div>`
+    }
+  ]
+};
+    {
+      tag: 'Login',
+      desc: { tag: `MÉDICO - TELA 1`, title: `Login simples,\nsem burocracia`, text: `Sem certificado digital, sem processo complexo. CRM ou e-mail e senha. Em 10 segundos está dentro.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="text-align:center;padding:20px 0 28px;">
+              <div class="logo" style="font-size:30px;">prescreve<span>.</span></div>
+              <div style="font-size:11px;color:var(--light);margin-top:4px;">para médicos</div>
+            </div>
+            <div class="input-group"><div class="input-label">CRM ou E-mail</div><div class="input-field focused">dra.camila@gmail.com</div></div>
+            <div class="input-group"><div class="input-label">Senha</div><div class="input-field" style="letter-spacing:5px;color:var(--mid);">••••••••</div></div>
+            <button class="btn btn-primary" style="margin-top:8px;">Entrar na plataforma</button>
+            <div style="text-align:center;font-size:12px;color:var(--light);margin-top:12px;">Primeiro acesso? <span style="color:var(--sage);font-weight:600;">Criar conta</span></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Dashboard',
+      desc: { tag: `MÉDICO - TELA 2`, title: `Dashboard e\nvisão geral`, text: `Resumo do mês: recomendações, conversão e pacientes em recompra. Ação rápida de nova recomendação.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <div class="logo" style="font-size:16px;">prescreve<span>.</span></div>
+              <div style="width:32px;height:32px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">👩‍⚕️</div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--charcoal);margin-bottom:2px;">Boa tarde, Dra. Camila 👋</div>
+            <div style="font-size:11px;color:var(--light);margin-bottom:14px;">Janeiro 2025</div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">47</div><div class="stat-label">Recomendações</div></div>
+              <div class="stat-card"><div class="stat-num">68%</div><div class="stat-label">Conversão</div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Em recompra</div></div>
+              <div class="stat-card"><div class="stat-num" style="color:var(--warn);">8</div><div class="stat-label">Não iniciaram ⚠️</div></div>
+            </div>
+            <button class="btn btn-primary">+ Nova Recomendação</button>
+            <div class="section-label">Recentes</div>
+            <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Maria Oliveira</div><div class="hist-detail">Minoxidil 5%  -  hoje</div></div><span class="badge badge-warn">Não iniciou</span></div>
+            <div class="hist-item"><div class="hist-icon">🧴</div><div style="flex:1;"><div class="hist-name">Ana Paula Lima</div><div class="hist-detail">Vitamina C  -  Dia 18/60</div></div><span class="badge badge-green">Ativo ✓</span></div>
+            <div class="hist-item" style="border-bottom:none;"><div class="hist-icon">☀️</div><div style="flex:1;"><div class="hist-name">Fernanda Reis</div><div class="hist-detail">FPS 70  -  Recompra →</div></div><span class="badge badge-blue">Recompra</span></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Nova rec.',
+      desc: { tag: `MÉDICO - TELA 3`, title: `Nova recomendação\nem 30 segundos`, text: `Autofill de paciente salvo + autofill de produto. Digita 3 letras, o sistema completa tudo. Envio em 1 clique.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+              <span style="font-size:18px;color:var(--mid);">←</span>
+              <div style="font-size:15px;font-weight:600;color:var(--charcoal);">Nova Recomendação</div>
+            </div>
+            <div class="input-group">
+              <div class="input-label">Paciente</div>
+              <div class="ac-trigger">👤 <span style="color:var(--sage-light);">Mari...</span></div>
+              <div class="ac-dropdown">
+                <div class="ac-item sel"><div class="ac-name">Maria Oliveira</div><div class="ac-detail">(11) 99999-1234  -  última consulta: 10 jan</div></div>
+                <div class="ac-item"><div class="ac-name">Marina Costa</div><div class="ac-detail">(11) 98888-5678  -  5 jan</div></div>
+                <div class="ac-item" style="font-size:11px;color:var(--light);font-style:italic;">+ Novo paciente</div>
+              </div>
+            </div>
+            <div class="input-group">
+              <div class="input-label">Produto</div>
+              <div class="ac-trigger">🔍 <span style="color:var(--sage-light);">mino...</span></div>
+              <div class="ac-dropdown">
+                <div class="ac-item sel"><div class="ac-name">Minoxidil 5% — Kirkland 60ml</div><div class="ac-detail">Uso tópico  -  ★ Favorito</div></div>
+                <div class="ac-item"><div class="ac-name">Minoxidil 5% — Regaine 60ml</div><div class="ac-detail">Uso tópico</div></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <div class="input-group" style="margin:0;"><div class="input-label">Frequência</div><div class="input-field focused">2x ao dia</div></div>
+              <div class="input-group" style="margin:0;"><div class="input-label">Duração</div><div class="input-field focused">3 meses</div></div>
+            </div>
+            <button class="btn btn-primary">Revisar e Enviar →</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Confirmar',
+      desc: { tag: `MÉDICO - TELA 4`, title: `Confirmar e\nenviar`, text: `Resumo visual antes do envio. Médico vê tudo e confirma. WhatsApp disparado instantaneamente para o paciente.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+              <span style="font-size:18px;color:var(--mid);">←</span>
+              <div style="font-size:15px;font-weight:600;color:var(--charcoal);">Confirmar Envio</div>
+            </div>
+            <div class="card" style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                <div><div style="font-size:10px;color:var(--light);margin-bottom:2px;">PACIENTE</div><div style="font-size:15px;font-weight:600;color:var(--charcoal);">Maria Oliveira</div><div style="font-size:11px;color:var(--mid);">(11) 99999-1234</div></div>
+                <div style="background:var(--sage-pale);border-radius:9px;padding:7px 11px;text-align:center;"><div style="font-size:9px;color:var(--sage);font-weight:700;">ENVIANDO POR</div><div style="font-size:12px;color:var(--sage);font-weight:700;">WhatsApp</div></div>
+              </div>
+              <div style="background:white;border-radius:11px;padding:13px;border:1.5px solid var(--sage);">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;"><span style="font-size:20px;">💊</span><div><div style="font-size:13px;font-weight:700;color:var(--sage);">Minoxidil 5% — Kirkland</div><div style="font-size:11px;color:var(--mid);">Uso tópico  -  60ml</div></div></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;">
+                  <div style="background:var(--sage-pale);border-radius:8px;padding:8px;"><div style="font-size:9px;color:var(--sage-light);">FREQUÊNCIA</div><div style="font-size:12px;font-weight:700;color:var(--sage);">2x ao dia</div></div>
+                  <div style="background:var(--sage-pale);border-radius:8px;padding:8px;"><div style="font-size:9px;color:var(--sage-light);">DURAÇÃO</div><div style="font-size:12px;font-weight:700;color:var(--sage);">3 meses</div></div>
+                </div>
+                <div style="background:var(--accent-light);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--mid);">📝 Evitar molhar por 4h após aplicação</div>
+              </div>
+            </div>
+            <button class="btn btn-primary">📤 Enviar para Maria agora</button>
+            <div style="text-align:center;font-size:12px;color:var(--sage);">+ Adicionar outro produto</div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Histórico',
+      desc: { tag: `MÉDICO - TELA 5`, title: `Histórico e\nstatus dos pacientes`, text: `Visão completa de todos os pacientes. Em qual fase cada um está: não iniciou, em tratamento, recompra.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+              <div class="logo" style="font-size:16px;">prescreve<span>.</span></div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:19px;color:var(--charcoal);margin-bottom:12px;">Meus Pacientes</div>
+            <div class="stat-row">
+              <div class="stat-card"><div class="stat-num">32</div><div class="stat-label">Em tratamento</div></div>
+              <div class="stat-card"><div class="stat-num" style="color:var(--warn);">8</div><div class="stat-label">Não iniciaram ⚠️</div></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+              <span class="badge badge-sage" style="padding:5px 11px;cursor:pointer;">Todos</span>
+              <span class="badge badge-warn" style="padding:5px 11px;cursor:pointer;">Não iniciou</span>
+              <span class="badge badge-green" style="padding:5px 11px;cursor:pointer;">Ativo</span>
+              <span class="badge badge-blue" style="padding:5px 11px;cursor:pointer;">Recompra</span>
+            </div>
+            <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Maria Oliveira</div><div class="hist-detail">Minoxidil 5%  -  hoje  -  Dia 0/90</div></div><span class="badge badge-warn">Não iniciou</span></div>
+            <div class="hist-item"><div class="hist-icon">🧴</div><div style="flex:1;"><div class="hist-name">Ana Paula Lima</div><div class="hist-detail">Vitamina C  -  Dia 18/60</div></div><span class="badge badge-green">Ativo ✓</span></div>
+            <div class="hist-item"><div class="hist-icon">☀️</div><div style="flex:1;"><div class="hist-name">Fernanda Reis</div><div class="hist-detail">FPS 70  -  Dia 28/30</div></div><span class="badge badge-blue">Recompra →</span></div>
+            <div class="hist-item" style="border-bottom:none;"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Carlos Mendes</div><div class="hist-detail">Ômega 3  -  Dia 45/90</div></div><span class="badge badge-green">Ativo ✓</span></div>
+          </div>
+        </div>`
+    }
+  ],
+  paciente: [
+    {
+      tag: 'WhatsApp',
+      desc: { tag: `PACIENTE - TELA 1`, title: `Recebe no\nWhatsApp`, text: `Quando o médico usa o app, o paciente recebe o link direto no WhatsApp. Sem baixar app — abre no navegador.` },
+      dark: false,
+      html: `
+        <div class="phone-shell">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body" style="padding:0;">
+            <div class="wa-header">
+              <span style="color:white;font-size:16px;margin-right:4px;">←</span>
+              <div class="wa-avatar">💊</div>
+              <div><div class="wa-name">prescreve.</div><div class="wa-status">online agora</div></div>
+            </div>
+            <div style="padding:14px 16px;">
+              <div style="text-align:center;font-size:10px;color:#888;margin-bottom:12px;">Hoje  -  14h32</div>
+              <div class="wa-bubble">
+                <div class="wa-text">Olá, Maria! 👋<br><br>A <strong>Dra. Camila Souza</strong> acabou de enviar uma recomendação para você.</div>
+                <div class="wa-product">
+                  <div class="wa-product-name">💊 Minoxidil 5% — Kirkland</div>
+                  <div class="wa-product-detail"><strong>Frequência:</strong> 2x ao dia<br><strong>Duração:</strong> 3 meses<br><strong>Obs:</strong> Evitar molhar por 4h</div>
+                </div>
+                <div class="wa-cta">🛒 Ver opções e comprar →</div>
+                <div class="wa-time">14:32 ✓✓</div>
+              </div>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Escanear',
+      desc: { tag: `PACIENTE - TELA 2`, title: `Escanear receita\nem papel`, text: `Médico usou papel? O paciente escaneia pelo app. A IA lê e oferece comprar agora ou salvar com lembrete.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Escanear Receita</div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px;line-height:1.6;">Aponte a câmera para o papel do médico. A IA lê e organiza automaticamente.</div>
+            <div class="scan-area">
+              <div class="scan-frame">
+                <div class="sc sc-tl"></div><div class="sc sc-tr"></div>
+                <div class="sc sc-bl"></div><div class="sc sc-br"></div>
+                <div class="scan-line"></div>
+              </div>
+            </div>
+            <div style="background:rgba(74,124,111,0.12);border-radius:12px;padding:13px;border:1.5px solid var(--sage);margin-bottom:12px;">
+              <div style="font-size:9px;color:var(--sage-light);font-weight:700;letter-spacing:1px;margin-bottom:6px;">✓ LIDO PELA IA — CONFIRME</div>
+              <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">💊 Minoxidil 5% — uso tópico</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;">Frequência: 2x ao dia  -  Duração: 3 meses<br>Obs: Evitar molhar por 4h após aplicação</div>
+            </div>
+            <button class="btn btn-accent" style="margin-bottom:8px;">🛒 Comprar agora</button>
+            <button class="btn btn-dark-secondary">🔔 Salvar e me lembrar depois</button>
+            <button class="btn btn-dark-ghost" style="font-size:12px;">Escanear novamente</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Comprar',
+      desc: { tag: `PACIENTE - TELA 3`, title: `Produto recomendado\n+ alternativas`, text: `Marca exata do médico em destaque. Abaixo, alternativas com mesmo efeito por preços diferentes.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="color:rgba(255,255,255,0.4);font-size:18px;">←</span>
+              <div style="font-size:14px;font-weight:600;color:white;">Recomendação</div>
+            </div>
+            <div style="margin-bottom:14px;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">Dra. Camila Souza  -  hoje</div>
+              <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;">Minoxidil 5%</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);">2x ao dia  -  3 meses  -  Evitar molhar 4h</div>
+            </div>
+            <div class="section-label">Recomendado pelo médico</div>
+            <div class="option-card-dark rec">
+              <div class="option-img-dark">🧴</div>
+              <div style="flex:1;">
+                <span class="badge" style="background:rgba(74,124,111,0.2);color:var(--sage-light);margin-bottom:4px;display:inline-block;">✓ Recomendado</span>
+                <div class="option-name-dark">Kirkland Minoxidil 5%</div>
+                <div class="option-brand-dark">60ml  -  Uso tópico</div>
+                <div class="option-price-dark">R$ 74,90</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;"><div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div><span style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.8px;">OUTRAS OPÇÕES</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div></div>
+            <div class="option-card-dark"><div class="option-img-dark">🧴</div><div style="flex:1;"><div class="option-name-dark">Regaine Minoxidil 5%</div><div class="option-brand-dark">60ml</div><div class="option-price-dark">R$ 89,90</div></div></div>
+            <div class="option-card-dark"><div class="option-img-dark">🧴</div><div style="flex:1;"><div class="option-name-dark">Minoxidil 5% Genérico</div><div class="option-brand-dark">60ml</div><div class="option-price-dark">R$ 52,00</div></div></div>
+            <button class="btn btn-dark-primary" style="margin-top:8px;">Comprar Kirkland  -  R$74,90</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0;">
+              <button class="btn btn-dark-secondary" style="margin:0;font-size:12px;padding:11px;">🏪 Já comprei</button>
+              <button class="btn btn-dark-ghost" style="margin:0;font-size:12px;padding:11px;">🔔 Lembrar depois</button>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Lembrete',
+      desc: { tag: `PACIENTE - TELA 4`, title: `Salvar com\nlembrete`, text: `Recomendação salva com instruções de uso. Paciente escolhe quando quer ser lembrado de comprar.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="text-align:center;padding:8px 0 16px;">
+              <div style="width:54px;height:54px;background:rgba(74,124,111,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px;">✅</div>
+              <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;margin-bottom:3px;">Recomendação salva!</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">Minoxidil 5%  -  Dra. Camila Souza</div>
+            </div>
+            <div class="card-dark" style="margin-bottom:12px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;letter-spacing:0.5px;">📋 INSTRUÇÕES DE USO</div>
+              <div style="font-size:13px;color:white;line-height:1.8;">Aplicar <strong>1ml</strong> no couro cabeludo<br><strong>2x ao dia</strong> — manhã e noite<br>Evitar molhar por <strong>4 horas</strong> após</div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Quando posso te lembrar de comprar?</div>
+            <div class="why-opt-dark sel">
+              <span style="font-size:18px;">🌅</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--sage-light);">Amanhã de manhã</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">às 9h00</div></div>
+            </div>
+            <div class="why-opt-dark">
+              <span style="font-size:18px;">📅</span>
+              <div><div style="font-size:13px;font-weight:500;color:white;">Em 3 dias</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">Sex, 09h00</div></div>
+            </div>
+            <div class="why-opt-dark">
+              <span style="font-size:18px;">⚙️</span>
+              <div><div style="font-size:13px;font-weight:500;color:white;">Escolher data e hora</div></div>
+            </div>
+            <button class="btn btn-dark-primary" style="margin-top:8px;">Definir lembrete</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'Tratamento',
+      desc: { tag: `PACIENTE - TELA 5`, title: `Tratamento ativo\ne progresso`, text: `Barra de progresso visual, instruções sempre acessíveis e lembrete automático quando o estoque está acabando.` },
+      dark: true,
+      html: `
+        <div class="phone-shell dark">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <div class="logo" style="font-size:16px;color:white;">prescreve<span style="color:var(--accent);">.</span></div>
+              <div style="width:30px;height:30px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;">🙋</div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:19px;color:white;margin-bottom:2px;">Olá, Maria 👋</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:14px;">1 tratamento ativo</div>
+            <div class="reorder-banner">
+              <div class="reorder-title">⏰ Hora de renovar!</div>
+              <div class="reorder-sub">Seu Minoxidil está acabando.<br>Faltam 5 dias para terminar o frasco.</div>
+              <div class="reorder-btn">Comprar agora →</div>
+            </div>
+            <div class="section-label">Tratamento ativo</div>
+            <div class="card-dark" style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                <div style="font-size:13px;font-weight:600;color:white;">💊 Minoxidil 5% — Kirkland</div>
+                <span class="badge" style="background:rgba(74,124,111,0.2);color:var(--sage-light);">Ativo</span>
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;">Dra. Camila Souza  -  2x ao dia</div>
+              <div class="pb-wrap">
+                <div class="pb-labels" style="color:rgba(255,255,255,0.3);"><span>Dia 25</span><span>de 90</span></div>
+                <div class="pb-track-dark"><div class="pb-fill-dark" style="width:28%;"></div></div>
+              </div>
+              <div><span class="tag tag-sage-dark">2x ao dia</span><span class="tag tag-accent-dark">3 meses</span></div>
+            </div>
+            <div class="section-label">Histórico</div>
+            <div class="hist-item-dark"><div class="hist-icon-dark">☀️</div><div style="flex:1;"><div class="hist-name-dark">Protetor Solar FPS 70</div><div class="hist-detail-dark">Dra. Camila  -  nov 2024</div></div><span class="badge badge-green">✓</span></div>
+            <div class="hist-item-dark" style="border-bottom:none;"><div class="hist-icon-dark">💊</div><div style="flex:1;"><div class="hist-name-dark">Vitamina D 2000UI</div><div class="hist-detail-dark">Dr. Paulo  -  out 2024</div></div><span class="badge badge-green">✓</span></div>
+          </div>
+        </div>`
+    }
+  ]
+};
+
+let mode = 'onboard';
+let idx = 0;
+
+function setMode(m) {
+  mode = m;
+  idx = 0;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn_' + m).classList.add('active');
+  render();
+}
+
+function getScreens() { return data[mode]; }
+
+function render() {
+  const screens = getScreens();
+  const s = screens[idx];
+
+  // Tabs
+  document.getElementById('tabsEl').innerHTML = screens.map((sc, i) =>
+    `<button class="tab ${i===idx?'active':''}" onclick="goTo(${i})">${sc.tag}</button>`
+  ).join('');
+
+  // Screen
+  const area = document.getElementById('screensEl');
+  area.innerHTML = `
+    <div class="desc-card">
+      <div class="desc-tag">${s.desc.tag}</div>
+      <div class="desc-title">${s.desc.title.replace('\n','<br>')}</div>
+      <div class="desc-text">${s.desc.text}</div>
+    </div>
+    ${s.html}
+  `;
+
+  // Dots
+  document.getElementById('dotsEl').innerHTML = screens.map((_,i) =>
+    `<div class="ndot ${i===idx?'active':''}" onclick="goTo(${i})"></div>`
+  ).join('');
+
+  document.getElementById('navLabel').textContent = `${idx+1}/${screens.length}`;
+  document.getElementById('btnPrev').disabled = idx === 0;
+  document.getElementById('btnNext').disabled = idx === screens.length - 1;
+}
+
+function goTo(i) { idx = i; render(); }
+function next() { if(idx < getScreens().length-1) { idx++; render(); } }
+function prev() { if(idx > 0) { idx--; render(); } }
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight') next();
+  if(e.key==='ArrowLeft') prev();
+});
+
+render();
+</script>
+</body>
+</html>
